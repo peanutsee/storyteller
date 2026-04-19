@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import json
 from dotenv import load_dotenv
 from langchain_core.messages import AIMessage, HumanMessage
 
@@ -28,25 +29,29 @@ if "messages" not in st.session_state:
 st.set_page_config(page_title="Storyteller AI", page_icon="💬", layout="wide")
 st.title("Welcome to Storyteller AI")
 
-tab1, tab2 = st.tabs(["💬 Chat", "🗄️ Database Schema"])
+tab1, tab2 = st.tabs(["💬 Chat", "🗄️ Database"])
 
 with tab2:
-    st.header("Database Schema")
+    st.header("Database Explorer")
     cursor = st.session_state.db_client.connection.cursor()
     
-    st.subheader("Portfolio Table")
-    cursor.execute("PRAGMA table_info('portfolio')")
-    portfolio_schema = cursor.fetchall()
-    if portfolio_schema:
-        df_portfolio = pd.DataFrame([dict(row) for row in portfolio_schema])
-        st.dataframe(df_portfolio, use_container_width=True)
+    st.subheader("Portfolio Data")
+    cursor.execute("SELECT * FROM portfolio")
+    portfolio_data = cursor.fetchall()
+    if portfolio_data:
+        df_portfolio = pd.DataFrame([dict(row) for row in portfolio_data])
+        st.dataframe(df_portfolio, hide_index=True, use_container_width=True)
+    else:
+        st.info("No data in Portfolio table.")
 
-    st.subheader("Exposure Table")
-    cursor.execute("PRAGMA table_info('exposure')")
-    exposure_schema = cursor.fetchall()
-    if exposure_schema:
-        df_exposure = pd.DataFrame([dict(row) for row in exposure_schema])
-        st.dataframe(df_exposure, use_container_width=True)
+    st.subheader("Exposure Data")
+    cursor.execute("SELECT * FROM exposure")
+    exposure_data = cursor.fetchall()
+    if exposure_data:
+        df_exposure = pd.DataFrame([dict(row) for row in exposure_data])
+        st.dataframe(df_exposure, hide_index=True, use_container_width=True)
+    else:
+        st.info("No data in Exposure table.")
 
 with tab1:
     # Render existing messages
@@ -84,7 +89,22 @@ with tab1:
                 
                 # Check if the AI actually replied with text
                 if isinstance(latest_message, AIMessage) and latest_message.content:
-                    final_content = latest_message.content
+                    raw_content = latest_message.content
+                    if isinstance(raw_content, dict) and "response" in raw_content:
+                        final_content = raw_content["response"]
+                    elif isinstance(raw_content, str):
+                        try:
+                            parsed_content = json.loads(raw_content)
+                            if isinstance(parsed_content, dict) and "response" in parsed_content:
+                                final_content = parsed_content["response"]
+                            else:
+                                final_content = raw_content
+                        except json.JSONDecodeError:
+                            final_content = raw_content
+                        except TypeError:
+                            final_content = str(raw_content)
+                    else:
+                        final_content = str(raw_content)
             
             status.update(label="Finished thinking!", state="complete", expanded=False)
             
