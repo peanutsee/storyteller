@@ -2,7 +2,7 @@
 
 I am bored so I built this on Sunday.
 
-<video src="assets/demo.mov" controls="controls" width="100%"></video>
+![Demo](https://github.com/peanutsee/storyteller/raw/main/assets/demo.mov)
 
 Anyway, Storyteller is an AI-powered personal portfolio assistant that leverages LangGraph and LangChain to dynamically query a local SQLite database. It features a modern, vibe-coded Streamlit Dashboard designed to visually explore financial data schemas and converse with an intelligent agent regarding simulated portfolio exposures.
 
