@@ -17,7 +17,7 @@ class DBClient:
     def connect(self):
         """Establishes the database connection."""
         os.makedirs(self.path_to_db, exist_ok=True)
-        self.connection = sqlite3.connect(self.full_path)
+        self.connection = sqlite3.connect(self.full_path, check_same_thread=False)
 
         self.connection.row_factory = sqlite3.Row
         return self.connection
@@ -71,7 +71,7 @@ class DBClient:
         """Checks if there is already data in the database."""
         if not self.connection:
             raise ConnectionError("Database is not connected. Call connect() first.")
-        
+
         cursor = self.connection.cursor()
         try:
             cursor.execute("SELECT COUNT(*) FROM portfolio")
