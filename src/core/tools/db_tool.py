@@ -12,7 +12,7 @@ def retrieve_portfolio_information_tool(username: str, runtime: ToolRuntime) -> 
     Use this tool to query the database and retrieve general portfolio information
     given the user name.
     """
-    db_client = runtime.config["configurable"].get("db_client")
+    db_client = runtime.context.db_client
     cursor = db_client.connection.cursor()
 
     cursor.execute("SELECT * FROM portfolio WHERE owner = ?", (username,))
@@ -30,7 +30,7 @@ def retrieve_portfolio_exposures_tool(username: str, runtime: ToolRuntime) -> st
     Use this tool to query the database and retrieve all related exposure
     information about the portfolio given the user name.
     """
-    db_client = runtime.config["configurable"].get("db_client")
+    db_client = runtime.context.db_client
     cursor = db_client.connection.cursor()
 
     query = """

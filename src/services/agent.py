@@ -26,5 +26,5 @@ class StoryTeller:
             tools=tools,
             system_prompt=storyteller_prompt,
             response_format=StoryTellerResponseFormat,
-            context_schema=DBContext(db_client=self.db_client),
+            context_schema=DBContext,
         )

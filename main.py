@@ -1,3 +1,4 @@
+from src.core.models.models import DBContext
 import streamlit as st
 import pandas as pd
 import json
@@ -75,12 +76,6 @@ with tab1:
         with st.chat_message("assistant"):
             status = st.status("Agent thinking...", expanded=True)
 
-            config = {
-                "configurable": {
-                    "db_client": st.session_state.db_client,
-                    "thread_id": "user-session-123",
-                }
-            }
             final_content = ""
             existing_messages_len = len(st.session_state.messages)
             seen_ids = set()
@@ -89,7 +84,7 @@ with tab1:
             for chunk in st.session_state.agent.stream(
                 {"messages": st.session_state.messages},
                 stream_mode="values",
-                config=config,
+                context=DBContext(db_client=st.session_state.db_client)
             ):
                 new_messages = chunk["messages"][existing_messages_len:]
                 for msg in new_messages:
