@@ -17,3 +17,11 @@ nl_to_sql_prompt = SystemMessage(
         "3. If the user's query is completely unrelated to these tables and cannot be answered, return exactly the string: 'NOT_POSSIBLE'"
     )
 )
+
+intent_classification_prompt = SystemMessage(
+    content=(
+        "You are an intent classification agent. Your job is to determine if the user's query "
+        "is related to their portfolio, exposures, or book of clients.\n"
+        "If yes, set is_related to true. Otherwise, set it to false. Provide your reasoning."
+    )
+)

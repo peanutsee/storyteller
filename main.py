@@ -21,9 +21,7 @@ if "db_client" not in st.session_state:
         st.session_state.db_client.seed_mock_data()
 
 if "agent" not in st.session_state:
-    st.session_state.agent = StoryTeller(
-        db_client=st.session_state.db_client
-    ).storyteller_agent()
+    st.session_state.agent = StoryTeller().storyteller_agent()
 
 if "messages" not in st.session_state:
     st.session_state.messages = []

@@ -61,7 +61,7 @@ def nl_to_sql_tool(query: str, runtime: ToolRuntime) -> str:
     CRITICAL INSTRUCTION: ALWAYS use this tool for ANY aggregations, counting queries (e.g., 'How many clients/portfolios do I have?'), or broad database questions. 
     Pass the user's EXACT natural language question into the 'query' parameter. DO NOT use the retrieve_portfolio_information_tool unless the user gave a specific name.
     """
-    db_client = runtime.config["configurable"].get("db_client")
+    db_client = runtime.context.db_client
     cursor = db_client.connection.cursor()
 
     model = ChatOpenAI(model="gpt-4o-mini")
